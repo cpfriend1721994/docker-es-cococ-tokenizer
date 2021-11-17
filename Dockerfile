@@ -21,11 +21,12 @@ RUN make install
 
 FROM docker.elastic.co/elasticsearch/elasticsearch:7.12.1
 WORKDIR /usr/share/tokenizer/dicts
-RUN touch acronyms alphabetic chemical_comp d_and_gi.txt Freq2NontoneUniFile i_and_y.txt keyword.freq nontone_pair_freq numeric
+COPY coccoc-tokenizer/dicts/tokenizer .
+COPY coccoc-tokenizer/dicts/vn_lang_tool .
 COPY --from=package_builder /coccoc-tokenizer/build/libcoccoc_tokenizer_jni.so /usr/lib
 COPY --from=package_builder /coccoc-tokenizer/build/multiterm_trie.dump /usr/share/tokenizer/dicts
 COPY --from=package_builder /coccoc-tokenizer/build/nontone_pair_freq_map.dump /usr/share/tokenizer/dicts
 COPY --from=package_builder /coccoc-tokenizer/build/syllable_trie.dump /usr/share/tokenizer/dicts
 COPY --from=package_builder /elasticsearch-analysis-vietnamese/target/releases/elasticsearch-analysis-vietnamese-7.12.1.zip /
-
-RUN echo "Y" | /usr/share/elasticsearch/bin/elasticsearch-plugin install --batch file:///elasticsearch-analysis-vietnamese-7.12.1.zip
+RUN echo "Y" | /usr/share/elasticsearch/bin/elasticsearch-plugin install --batch file:///elasticsearch-analysis-vietnamese-7.12.1.zip && \
+    /usr/share/elasticsearch/bin/elasticsearch-plugin install analysis-icu

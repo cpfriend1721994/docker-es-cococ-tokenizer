@@ -4,7 +4,8 @@ services:
 
   elasticsearch:
     container_name: elasticsearch
-    build: .
+    # build: .
+    image: docker pull tunnm/docker-es-cococ-tokenizer:7.12.1
     ports:
       - "9200:9200"
     restart: unless-stopped
